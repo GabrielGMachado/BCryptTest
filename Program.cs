@@ -1,6 +1,8 @@
+using BCryptTest;
 using BCryptTest.Context;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,12 +18,23 @@ builder.Services.AddDbContext<UserContext>(options => {
     options.UseMySql(conn, ServerVersion.AutoDetect(conn));
 });
 
+builder.Services.AddInfrastructure(builder.Configuration);
+
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference(options =>
+    {
+        options.Title = "My First Scalar Test";
+        options.Theme = ScalarTheme.BluePlanet;
+        options.DefaultHttpClient = new(ScalarTarget.CSharp, ScalarClient.HttpClient);
+        options.CustomCss = "";
+        options.ShowSidebar = true;
+    });
 }
 
 app.UseHttpsRedirection();

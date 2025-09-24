@@ -1,4 +1,5 @@
-﻿using BCryptTest.Models;
+﻿using BCryptTest.Context;
+using BCryptTest.Models;
 using BCryptTest.Repository;
 using BCryptTest.Request;
 using Microsoft.AspNetCore.Http;
@@ -11,10 +12,14 @@ namespace BCryptTest.Controllers
     public class HashPassController : ControllerBase
     {
         public readonly IUserRepository _userRepository;
+        public readonly UserContext _dbContext;
 
-        public HashPassController(IUserRepository userRepository)
+        public HashPassController(
+            IUserRepository userRepository,
+            UserContext dbContext)
         {
             _userRepository = userRepository;
+            _dbContext = dbContext;
         }
 
         [HttpPost]
@@ -36,6 +41,22 @@ namespace BCryptTest.Controllers
             _userRepository.Update();
 
             return Created();
+        }
+
+        [HttpPost("PasswordVerify")]
+
+        public IActionResult VerifyPassword(
+            [FromBody] UserLoginRequestJson request)
+        {
+            var user = _dbContext.users.FirstOrDefault(u => u.Name == request.Name);
+            if (user == null)
+            {
+                return Ok(false);
+            }
+
+            bool IsValid = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
+
+            return Ok(IsValid);
         }
     }
 }
