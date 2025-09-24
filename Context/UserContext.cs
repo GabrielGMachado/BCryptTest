@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BCryptTest.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BCryptTest.Context
 {
@@ -18,7 +19,7 @@ namespace BCryptTest.Context
             base.ConfigureConventions(configurationBuilder);
         }
 
-
+        public DbSet<User> users { get; set; }
        
     }
 }

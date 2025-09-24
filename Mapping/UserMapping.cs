@@ -8,13 +8,19 @@ namespace BCryptTest.Mapping
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.ToTable("User");
+            builder.ToTable("Users");
 
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Name)
                 .IsRequired();
 
+            builder.Property(x => x.Email)
+                .IsRequired();
+
+            builder.Property(x => x.Password)
+                .IsRequired()
+                .HasMaxLength(72);
         }
     }
 }
