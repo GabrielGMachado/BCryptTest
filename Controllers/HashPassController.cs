@@ -32,10 +32,8 @@ namespace BCryptTest.Controllers
                 Id = Guid.NewGuid(),
                 Name = request.Name,
                 Email = request.Email,
-                Password = request.Password,
+                Password = BCrypt.Net.BCrypt.EnhancedHashPassword(request.Password, 13)
             };
-
-            newUser.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(request.Password, 13);
 
             _userRepository.Add(newUser);
             _userRepository.Update();
@@ -43,7 +41,7 @@ namespace BCryptTest.Controllers
             return Created();
         }
 
-        [HttpPost("PasswordVerify")]
+        [HttpPost("Pass")]
 
         public IActionResult VerifyPassword(
             [FromBody] UserLoginRequestJson request)
@@ -54,7 +52,7 @@ namespace BCryptTest.Controllers
                 return Ok(false);
             }
 
-            bool IsValid = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
+            bool IsValid = BCrypt.Net.BCrypt.EnhancedVerify(request.Password, user.Password);
 
             return Ok(IsValid);
         }
